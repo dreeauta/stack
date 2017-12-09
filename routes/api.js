@@ -68,12 +68,33 @@ router.post('/:resource', function(req,res,next){
         return
       }
       res.json({
-        confirmation: 'succcess',
+        confirmation: 'success',
         result: result
       })
     })
   }
 });
+
+
+router.put('/:resource/:id', function(req, res, next){
+  var resource = req.params.resource;
+
+  if( resource == 'zone'){
+    ZoneController.findByIdAndUpdate( id, req.query, function(err,result){
+      if (err){
+        res.json({
+          confirmation:' fail',
+          message: err
+        })
+        return
+      }
+      res.json({
+        confirmation: 'success',
+        result: result
+      })
+    })
+  }
+})
 
 
 module.exports = router;

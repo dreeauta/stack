@@ -1,0 +1,84 @@
+import React, {Component} from 'react';
+import Comment from '../presentation/Comment';
+import superagent from 'superagent';
+
+class Comments extends Component {
+  constructor(){
+    super();
+    this.state = {
+      comment: {
+        username: '',
+        body: '',
+        timestamp: ''
+      },
+      list: [
+      ]
+    }
+  }
+
+  componentDidMount(){
+    superagent
+    .get('/api/comment')
+    .query(null)
+    .set('Accept', 'application/json')
+    .end((err, response) => {
+      if (err) {
+        alert('Error: ' + response )
+      }
+
+      console.log(JSON.stringify(response.body))
+      let results = response.body.results;
+
+      this.setState({
+        list: results
+      });
+
+    })
+  }
+
+  submitComment(){
+    let updatedList = Object.assign([], this.state.list);
+    updatedList.push(this.state.comment);
+    this.setState({
+      list: updatedList
+    })
+    console.log("submit" + JSON.stringify(this.state.comment));
+  }
+
+  updateComment(event) {
+    let updatedComment = Object.assign({}, this.state.comment)
+    updatedComment[event.target.id] = event.target.value;
+    this.setState({
+      comment: updatedComment
+    })
+  }
+
+  render() {
+
+    const commentList = this.state.list.map((comment, i)=> {
+      return(
+        <li key={i}> <Comment currentComment={comment}/></li>
+      )
+
+    })
+
+    return(
+      <div>
+        <h2> Comments:  </h2>
+        <ul>
+          {commentList}
+
+        </ul>
+
+         <input id="username" onChange={this.updateComment.bind(this)} type="text" placeholder="Username"/> <br/>
+         <input id="body" onChange={this.updateComment.bind(this)} type="text" placeholder="Comment" /> <br/>
+         <input id="timestamp" onChange={this.updateComment.bind(this)} type="text" placeholder="Time" /> <br/>
+
+         <button onClick={this.submitComment.bind(this)}> Submit Comment</button>
+      </div>
+    )
+  }
+}
+
+
+export default Comments;

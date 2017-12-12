@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import Zone from '../presentation/Zone';
-import superagent from 'superagent';
+import {APIManager} from '../../utils';
 
 class Zones extends Component {
   constructor(){
     super();
-    this.state ={
+    this.state = {
       zone: {
         name: '',
         zipCodes: ''
@@ -17,20 +17,16 @@ class Zones extends Component {
 
   componentDidMount(){
     //function gets called regardless of if we call it or not on page load
-
-    superagent
-    .get('/api/zone')
-    .query(null)
-    .set('Accept', 'application/json')
-    .end((err, response) => {
+    APIManager.get('/api/zone', null, (err, response) => {
       if (err) {
-        alert('Error: ' + err)
+        alert('Error: ' + err.message) //callback was message
+        return
       }
-      console.log(JSON.stringify(response.body))
-      let results = response.body.results;
+
+      console.log('RESULTS: ' +JSON.stringify(response.results));
 
       this.setState({
-        list: results
+        list: response.results
       })
     })
   }
@@ -47,11 +43,25 @@ class Zones extends Component {
   }
 
   submitZone(){
-    console.log('submit Zone: ' + JSON.stringify(this.state.zone))
-    let updatedList = Object.assign([], this.state.list);
-    updatedList.push(this.state.zone);
-    this.setState({
-      list: updatedList
+    console.log('submit Zone: ' + JSON.stringify(updatedZone))
+      let updatedZone = Object.assign({}, this.state.zone)
+      updatedZone['zipCodes'] = updatedZone.zipCodes.split(',')
+
+
+    APIManager.post('/api/zone', updatedZone, (err, response) => {
+      if (err) {
+        alert('Error: '+ err.message)
+        return
+      }
+      console.log('ZONE Created: ' + JSON.stringify(response));
+
+      let updatedList = Object.assign([], this.state.list);
+      updatedList.push(response.result);  //at this point the updatedZone doesn't exist until we get it back from the API
+
+      this.setState({
+        list: updatedList
+      })
+
     })
   }
 

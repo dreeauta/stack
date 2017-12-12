@@ -21,16 +21,15 @@ module.exports = {
 
   },
   create: function(params, callback){
-    var zips = params['zipcodes'];
-    var zip = zips.split(',');
-    var newZips = []
-    //create new zipcode array for multiple zipcodes
-    zip.forEach(function(zipCode){
-      newZips.push(zipCode.trim())
-      //user might use spaces
-    })
-
-    params['zipcodes'] = newZips;
+    // var zips = params['zipCodes'];
+    // var zip = zips.split(',');
+    // var newZips = []
+    // //create new zipcode array for multiple zipCodes
+    // zip.forEach(function(zipCode){
+    //   newZips.push(zipCode.trim())
+    //   //user might use spaces
+    // })
+    // params['zipCodes'] = newZips;
 
     Zone.create(params, function(err, zone){
       if (err){
